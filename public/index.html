@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        
+        <div id="container">
+        <header>
+            <h1>Craft Ideas <a href="#" id="addlink">+</a></h1>
+        </header>
+            <div id="crafts-container"></div>
+        </div>
+    
+        <!-- Modal -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="popup-title"></h2>
+                <img id="popup-image" src="" alt="">
+                <p id="popup-description"></p>
+                <ul id="popup-supplies"></ul>
+            </div>
+        </div>
+        <!-- Modal 2 -->
+        <div id="myModal2" class="modal2">
+            <div id="modal2-content" class="modal2-content">
+                <span class="close2">&times;</span>
+                <p>
+                    <label for="name">Craft Name:</label>
+                    <input
+                      id="name"
+                      type="text"
+                      placeholder="name"
+                      name="name"
+                      required
+                    />
+                  </p>
+                  <p>
+                    <label for="description">Description:</label>
+                    <input id="description" type="description" name="description" required />
+                  </p>
+                  <p>
+                    <label for="imagebutton">Upload Image:</label>
+                    <input type="file" id="imagebutton" name="imagebutton" accept="image/*" />
+                </p>
+                  <p>
+                    <button id="supplybutton" type="supplybutton">Add Supply</button>
+                  </p> 
+                  <section id="supply-container"></section>
+                  <p>
+                    <button id="savebutton" type="savebutton">Save</button>
+                  </p> 
+                  <p>
+                    <button id="cancelbutton" type="cancelbutton">Cancel</button>
+                  </p> 
+            </div>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
