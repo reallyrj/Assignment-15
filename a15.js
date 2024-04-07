@@ -22,10 +22,9 @@ const storage = multer.diskStorage({
 app.get('/', (req, res) => {
     res.sendFile(__dirname + "index.html");
 });
-
+let crafts=[];
 app.get("/api/crafts",(req,res)=>{
     console.log("api request");
-    let crafts=[];
     crafts[0]={
         name: "Beaded JellyFish",
         image: "bead-jellyfish.jpg",
@@ -308,35 +307,15 @@ app.get("/api/crafts",(req,res)=>{
                 res.send(crafts);
             });
       
-         console.log(crafts);
         res.json(crafts);
 });
 
-app.post("/api/crafts",upload.single("img"),(req,res)=>{
-    const result=validateCraft(req.body);
-
-    if (result.error){
-        res.status(400).send(result.error.details[0].message);
-        return;
-    }
-    const craft={
-        _id: crafts.length+1,
-        name: req.body.name,
-        description: req.body.description,
-        supplies: req.body.supplies.split(","),
-    };
-    if(req.file){
-        craft.img="images/"+req.file.filename;
-
-    }
-    crafts.push(craft);
-    res.send(crafts);
-});
 const validateCraft = (craft) => {
     const schema = Joi.object({
         name: Joi.string().min(3).required(),
         description: Joi.string().min(3).required(),
         supplies: Joi.array().items(Joi.string()).required(),
+        image: Joi.allow(""),
     });
 
     return schema.validate(craft);

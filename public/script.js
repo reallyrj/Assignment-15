@@ -158,13 +158,12 @@ saveButton.onclick = async function () {
         return;
     }
     const imageFile = imageInput.files[0];
-    const imageUrl = URL.createObjectURL(imageFile);
-
+    
     const formData = {
         name: name,
         description: description,
         supplies: supplies,
-        image: imageUrl
+        image: imageFile,
     };
 
     console.log('Form Data:',formData);
@@ -181,16 +180,16 @@ saveButton.onclick = async function () {
         console.log('Craft successfully added:', data);
         
         modal2.style.display = 'none';
+
+        // Create the craft element after successfully adding the craft
+        const craftElement = createCraftElement(formData);
+        craftsContainer.appendChild(craftElement);
     })
     .catch(error => {
         console.error('Error saving craft:', error);
         // Handle error
     });
 };
-
-
-
-
 
 // Cancel button click event
 const cancelButton = document.getElementById("cancelbutton");
@@ -199,7 +198,5 @@ cancelButton.onclick = function () {
     // Hide the form dialog without saving anything
     modal2.style.display = 'none';
 };
-
-
 
 
