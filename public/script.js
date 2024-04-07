@@ -8,6 +8,16 @@ const popupImage = document.getElementById('popup-image');
 const popupDescription = document.getElementById('popup-description');
 const popupSupplies = document.getElementById('popup-supplies');
 
+
+const getCrafts=async()=>{
+try{
+    return (await fetch("api/crafts/")).json();
+} catch(error){
+    console.log(error);
+}
+};
+
+
 // Function to create craft elements
 function createCraftElement(craft) {
     const craftDiv = document.createElement('div');
@@ -18,7 +28,7 @@ function createCraftElement(craft) {
     image.alt = craft.name;
 
     craftDiv.appendChild(image);
-
+//modal 
     craftDiv.addEventListener('click', function () {
         popupTitle.textContent = craft.name;
         popupImage.src = 'images/' + craft.image;
@@ -26,7 +36,7 @@ function createCraftElement(craft) {
         popupSupplies.innerHTML = "Supplies: " + '';
         craft.supplies.forEach(function (supply) {
             const li = document.createElement('li');
-            li.textContent = supply;
+            li.textContent= supply;
             popupSupplies.appendChild(li);
         });
         modal.style.display = 'block';
@@ -36,7 +46,7 @@ function createCraftElement(craft) {
 }
 
 // Populate crafts from JSON file
-fetch('json/crafts.json')
+ fetch('json/crafts.json')
     .then(response => response.json())
     .then(data => {
         data.forEach(craft => {
@@ -65,7 +75,6 @@ const toggleplus = () => {
     // Clear previous data
     document.getElementById('name').value = ''; // Clear craft name input
     document.getElementById('description').value = ''; // Clear description input
-    // Assuming you have inputs for supplies, clear them here as well
     
     // Hide any previously displayed image
     const inputsection = document.getElementById("modal2-content");
@@ -134,7 +143,7 @@ addSupplyButton.onclick = function () {
 // Save button click event
 const saveButton = document.getElementById("savebutton");
 
-saveButton.onclick = function () {
+saveButton.onclick = async function () {
     const name = document.getElementById('name').value;
     const description = document.getElementById('description').value;
     const supplies = [];
@@ -145,7 +154,6 @@ saveButton.onclick = function () {
     // Get the selected image file
     const imageInput = document.getElementById('imagebutton');
     if (imageInput.files.length === 0) {
-        // Handle the case when no file is selected
         console.error('No image selected');
         return;
     }
@@ -158,8 +166,10 @@ saveButton.onclick = function () {
         supplies: supplies,
         image: imageUrl
     };
+
+    console.log('Form Data:',formData);
     
-    fetch('/api/crafts', {
+    await fetch('/api/crafts/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -171,8 +181,6 @@ saveButton.onclick = function () {
         console.log('Craft successfully added:', data);
         
         modal2.style.display = 'none';
-        // Refresh the data on the page to add the new item
-        // You may need to reload the entire page or update the crafts list from the response data
     })
     .catch(error => {
         console.error('Error saving craft:', error);

@@ -1,19 +1,36 @@
 const express = require("express");
 const app = express();
+const Joi = require("joi");
+const multer = require("multer");
 app.use(express.static("public"));
+app.use("/uploads", express.static("uploads"));
+app.use(express.json());
+const cors = require("cors");
+app.use(cors());
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "./public/images/");
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.originalname);
+    },
+  });
+ 
+  const upload = multer({ storage: storage });
+  
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + "/index.html");
+    res.sendFile(__dirname + "index.html");
 });
 
 app.get("/api/crafts",(req,res)=>{
     console.log("api request");
-    const crafts=[];
+    let crafts=[];
     crafts[0]={
         name: "Beaded JellyFish",
         image: "bead-jellyfish.jpg",
         description: "Create a hanging jellyfish using eggcartons and multicolored beads",
-        suppplies: [
+        supplies: [
             "string",
             "egg cartons",
             "beads"
@@ -24,7 +41,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Character Bookmarks",
         image: "bookmarks.jpeg",
         description: "Create a little birdy bookmark to always remin you were you were",
-        suppplies: [
+        supplies: [
             "yellow construction paper",
             "orange construction paper",
             "black construction paper"
@@ -35,7 +52,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Button Flowers",
         image: "button-flowers.jpeg",
         description: "Create a fun bouquet of flowers with your favorite buttons",
-        suppplies: [
+        supplies: [
             "multicolored buttons",
             "multicolored flet",
             "green straws",
@@ -47,7 +64,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Cheerio Necklaces",
         image: "cheerio-necklace.webp",
         description: "Create a fun and edible necklace",
-        suppplies: [
+        supplies: [
             "Cheerios or Fruit Loops",
             "Elastic string"
         ]
@@ -57,7 +74,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Cotton Ball Cupcakes",
         image: "cotton-ball-cupcakes.webp",
         description: "Decorate your fun filled cupcake however you want.",
-        suppplies: [
+        supplies: [
             "Construction Paper",
             "Cotton Balls",
             "Black Sharpie",
@@ -69,7 +86,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "School Themed Mason Jars",
         image: "decorated-jars.jpeg",
         description: "Let's make mason jars to ",
-        suppplies: [
+        supplies: [
             "Construction Paper",
             "Cotton Balls",
             "Black Sharpie",
@@ -81,7 +98,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Egg Carton Flowers",
         image: "egg-carton-flowers.jpg",
         description: "Make a beautiful bouquet with egg cartons and other items you can find around the house",
-        suppplies: [
+        supplies: [
             "Egg Cartons",
             "Butons",
             "Green Pipe Cleaner",
@@ -94,7 +111,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Finger Puppets",
         image: "finger-puppets.jpeg",
         description: "These little critters are easy to make, and will entertain your little one while they make a show.",
-        suppplies: [
+        supplies: [
             "Pom-poms",
             "Googly Eyes",
             "Pipe Cleaner"
@@ -105,7 +122,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Ribbon Flower Headbands",
         image: "flower-headbands.jpg",
         description: "Let your little one show off her new style with these pretty and customizable headbands",
-        suppplies: [
+        supplies: [
             "Plain headband",
             "Ribbon",
             "Buttons",
@@ -117,7 +134,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Hand Print Fish Puppets",
         image: "handprint-fish.jpg",
         description: "We all need to take every opportunity we can to remember those tiny hands, and what better way to do it, then to make fish puppets!",
-        suppplies: [
+        supplies: [
             "Popsicle sticks",
             "Cardstock",
             "Gems",
@@ -129,7 +146,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Hand Print Tree",
         image: "hand-print-tree.jpeg",
         description: "This is a fun way to get your little one into finger painting.",
-        suppplies: [
+        supplies: [
             "Watercolor Paper",
             "Finger paint"
         ]
@@ -139,7 +156,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Melted Bead Bowl",
         image: "melted-bead-bowl.jpeg",
         description: "All they need to do is shape their faviorte design, warm it up and they have a brand new bowl.",
-        suppplies: [
+        supplies: [
             "Beads",
             "Bowl",
             "Parchment paper"
@@ -150,7 +167,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Monster Kites",
         image: "monster-rolls.jpg",
         description: "Let's make those scary toilet paper rolls fly!",
-        suppplies: [
+        supplies: [
             "Toilet paper rolls",
             "Paint",
             "Tissue Paper",
@@ -162,7 +179,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Pool Noodle Boats",
         image: "noodle-boats.png",
         description: "Let's make a boat that will actually float, due to the floating bottom of a pool noodle.",
-        suppplies: [
+        supplies: [
             "Pool Noodle",
             "Straw",
             "Plastic Paper"
@@ -173,7 +190,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Paper Plate Bees",
         image: "paper-plate-bees.jpeg",
         description: "Let's have fun with making cute little bees, or big bees actually.",
-        suppplies: [
+        supplies: [
             "Paper Plate",
             "Googly Eyes",
             "Close Pins",
@@ -187,7 +204,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Paper Plate Dinosaurs",
         image: "paper-plate-dinosaurs.jpg",
         description: "Who would have thought that half a paper plate would be the base of a dinosaur.",
-        suppplies: [
+        supplies: [
             "Paper Plate",
             "Paint",
             "Close Pins",
@@ -199,7 +216,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Porcupine Leafs",
         image: "porcupine-leaf.webp",
         description: "Let's turn an ordinary paper plate into a fun filled mask.",
-        suppplies: [
+        supplies: [
             "Leafs",
             "Berries",
             "Acorns",
@@ -211,7 +228,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Rainbow Cloud",
         image: "rainbow-cloud.webp",
         description: "Some cotton and color and you'll have a beautiful rainbow.",
-        suppplies: [
+        supplies: [
             "Paper Plate",
             "Cotton Balls",
             "Construction Paper"
@@ -222,7 +239,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Fun Shaped Crayons",
         image: "shaped-crayons.jpg",
         description: "Let's melt some crayons together and let them harden into fun shapes.",
-        suppplies: [
+        supplies: [
             "Broken Crayons",
             "Mold"
         ]
@@ -232,7 +249,7 @@ app.get("/api/crafts",(req,res)=>{
         name: "Straw Farris Wheel",
         image: "straw-faris-wheel.jpg",
         description: "It might be too small to ride, but this farris wheel is the most colorful of all.",
-        suppplies: [
+        supplies: [
             "Multicolored straws",
         ]};
        crafts[20]= {
@@ -285,12 +302,70 @@ app.get("/api/crafts",(req,res)=>{
             supplies: [
                 "Clay",
                 "Glitter"
-            ]
+            ]  
         };
-        console.log(crafts);
+            app.get("/api/recipes",(req,res)=>{
+                res.send(crafts);
+            });
+      
+         console.log(crafts);
         res.json(crafts);
 });
 
+app.post("/api/crafts",upload.single("img"),(req,res)=>{
+    const result=validateCraft(req.body);
+
+    if (result.error){
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+    const craft={
+        _id: crafts.length+1,
+        name: req.body.name,
+        description: req.body.description,
+        supplies: req.body.supplies.split(","),
+    };
+    if(req.file){
+        craft.img="images/"+req.file.filename;
+
+    }
+    crafts.push(craft);
+    res.send(crafts);
+});
+const validateCraft = (craft) => {
+    const schema = Joi.object({
+        name: Joi.string().min(3).required(),
+        description: Joi.string().min(3).required(),
+        supplies: Joi.array().items(Joi.string()).required(),
+    });
+
+    return schema.validate(craft);
+};
+
+app.post("/api/crafts", upload.single("img"), (req, res) => {
+    const result = validateCraft(req.body);
+
+    if (result.error) {
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+
+    const craft = {
+        _id: crafts.length + 1,
+        name: req.body.name,
+        description: req.body.description,
+        supplies: req.body.supplies,
+    };
+
+    if (req.file) {
+        craft.img = "images/" + req.file.filename;
+    }
+
+    crafts.push(craft);
+    res.send(crafts);
+});
+
+
 app.listen(3000, () => {
     console.log("listening");
-})
+});
