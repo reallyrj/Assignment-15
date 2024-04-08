@@ -319,6 +319,7 @@ const deleteclicked = () => {
         // If user cancels deletion, do nothing
         console.log("Deletion cancelled");
     }
+    modal2.style.display="none";
 };
 
 // Function to delete craft by ID (you need to implement this)
