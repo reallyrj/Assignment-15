@@ -310,16 +310,6 @@ app.get("/api/crafts",(req,res)=>{
         res.json(crafts);
 });
 
-const validateCraft = (craft) => {
-    const schema = Joi.object({
-        name: Joi.string().min(3).required(),
-        description: Joi.string().min(3).required(),
-        supplies: Joi.array().items(Joi.string()).required(),
-        image: Joi.allow(""),
-    });
-
-    return schema.validate(craft);
-};
 
 app.post("/api/crafts", upload.single("img"), (req, res) => {
     const result = validateCraft(req.body);
@@ -343,6 +333,52 @@ app.post("/api/crafts", upload.single("img"), (req, res) => {
     crafts.push(craft);
     res.send(crafts);
 });
+
+app.put("/api/crafts/:id", upload.single("img"),(req,res)=>{
+    const craft=crafts.find((r)=>r._id==parseInt(req.params.id));
+
+    if(!craft) res.status(400).send("craft with id not found");
+
+    const result=validateCraft(req.body);
+    //
+    if(result.error){
+        res.status(400).send(result.error.details[0].message);
+        return;
+      }
+    
+      craft.name = req.body.name;
+      craft.description - req.body.description;
+      craft.supplies = req.body.ingredients.split(",");
+    
+      if(req.file) {
+        craft.img = "images/" + req.file.filename;
+      }
+    
+      res.send(recipe);
+    });
+
+    app.delete("/api/crafts/:id", (req, res)=>{
+        const craft = crafts.find((r)=>r._id === parseInt(req.params.id));
+      
+        if(!craft){
+          res.status(404).send("The craft with the given id was not found");
+        }
+      
+        const index = crafts.indexOf(craft);
+        crafts.splice(index,1);
+        res.send(craft);
+      });
+
+    const validateCraft = (craft) => {
+    const schema = Joi.object({
+        name: Joi.string().min(3).required(),
+        description: Joi.string().min(3).required(),
+        supplies: Joi.array().items(Joi.string()).required(),
+        image: Joi.allow(""),
+    });
+
+    return schema.validate(craft);
+};
 
 
 app.listen(3000, () => {

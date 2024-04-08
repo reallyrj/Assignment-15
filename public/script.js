@@ -1,3 +1,4 @@
+
 const craftsContainer = document.getElementById('crafts-container');
 const modal = document.getElementById('myModal');
 const modal2=document.getElementById('myModal2');
@@ -29,7 +30,8 @@ function createCraftElement(craft) {
 
     craftDiv.appendChild(image);
 //modal 
-    craftDiv.addEventListener('click', function () {
+craftDiv.addEventListener('click', function () {
+
         popupTitle.textContent = craft.name;
         popupImage.src = 'images/' + craft.image;
         popupDescription.textContent = "Description: " + craft.description;
@@ -71,10 +73,13 @@ window.onclick = function (event) {
 // Open form on click
 const plus = document.getElementById('addlink');
 
-const toggleplus = () => {
+const toggleplus = () => { 
+    
+    modal2.style.display = "block";
     // Clear previous data
     document.getElementById('name').value = ''; // Clear craft name input
     document.getElementById('description').value = ''; // Clear description input
+    document.getElementById('supplies').value='';
     
     // Hide any previously displayed image
     const inputsection = document.getElementById("modal2-content");
@@ -82,7 +87,7 @@ const toggleplus = () => {
     existingImages.forEach(img => img.remove());
     
     // Display the form dialog
-    modal2.style.display = "block";
+   
 }
 
 plus.onclick = toggleplus;
@@ -199,3 +204,54 @@ cancelButton.onclick = function () {
     modal2.style.display = 'none';
 };
 
+//new buttons functionality 
+const elink=document.getElementById('edit-link');
+const dlink=document.getElementById('delete-link');
+
+// Edit function
+const editclicked = () => {
+    console.log("edit clicked");
+    
+    // Hide the details dialog
+    modal.style.display = 'none';
+
+    // Show the edit dialog
+    modal2.style.display = 'block';
+
+    // Populate the edit form with existing data
+    document.getElementById('name').value = popupTitle.textContent;
+    document.getElementById('description').value = popupDescription.textContent.replace('Description: ', '');
+
+    // Clear previous supplies
+    document.getElementById('supply-container').innerHTML = '';
+
+    // Add supplies
+    popupSupplies.querySelectorAll('li').forEach(li => {
+        const newSupplyInput = document.createElement("input");
+        newSupplyInput.type = "text";
+        newSupplyInput.placeholder = "Enter supply";
+        newSupplyInput.classList.add("supply-input");
+        newSupplyInput.value = li.textContent;
+        document.getElementById('supply-container').appendChild(newSupplyInput);
+    });
+
+    // Display the image in the screenshot
+    const imageSrc = popupImage.src;
+    if (imageSrc) {
+        const screenshotImg = document.getElementById('screenshot-image');
+        screenshotImg.src = imageSrc;
+    }
+};
+
+// Assign editclicked function to the edit link
+
+elink.onclick = editclicked;
+
+//delete
+
+deleteclicked =()=>{
+    console.log("deleteclicked");
+
+
+};
+dlink.onclick=deleteclicked;
