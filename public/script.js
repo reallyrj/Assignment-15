@@ -21,8 +21,14 @@ try{
 
 // Function to create craft elements
 function createCraftElement(craft) {
+    console.log('Craft ID:',craft._id);
     const craftDiv = document.createElement('div');
     craftDiv.classList.add('craft');
+    console.log("Craft id:",craft._id);
+    craftDiv.dataset.craftId = craft._id;
+    console.log('Dataset:', craftDiv.dataset);
+    
+
 
     const image = document.createElement('img');
     image.src = 'images/' + craft.image;
@@ -51,7 +57,9 @@ craftDiv.addEventListener('click', function () {
  fetch('json/crafts.json')
     .then(response => response.json())
     .then(data => {
+        console.log('Fetched data:',data);
         data.forEach(craft => {
+            console.log('Craft Object:',craft);
             const craftElement = createCraftElement(craft);
             craftsContainer.appendChild(craftElement);
         });
@@ -144,7 +152,6 @@ addSupplyButton.onclick = function () {
     
     supplyContainer.appendChild(newSupplyInput);
 };
-
 // Save button click event
 // Save button click event
 const saveButton = document.getElementById("savebutton");
@@ -157,6 +164,9 @@ saveButton.onclick = async function () {
         supplies.push(input.value);
     });
     
+    // Get the craft ID from the dataset of the craft element
+    const craftId = popupTitle.parentElement.dataset.craftId;
+
     // Get the selected image file
     const imageInput = document.getElementById('imagebutton');
     if (imageInput.files.length === 0) {
@@ -166,6 +176,7 @@ saveButton.onclick = async function () {
     const imageFile = imageInput.files[0];
     
     const formData = {
+        _id: craftId,
         name: name,
         description: description,
         supplies: supplies,
@@ -182,9 +193,6 @@ saveButton.onclick = async function () {
         // Perform the update operation here
         console.log('Editing an existing craft');
 
-        // Assuming you have access to the craft ID or some identifier
-        const craftId = popupTitle.dataset.craftId; // Example: data-craft-id attribute on popupTitle
-        
         // Update the craft on the server using a PUT request
         await fetch(`/api/crafts/${craftId}`, {
             method: 'PUT',
@@ -240,6 +248,7 @@ saveButton.onclick = async function () {
 };
 
 
+
 // Cancel button click event
 const cancelButton = document.getElementById("cancelbutton");
 
@@ -291,10 +300,46 @@ const editclicked = () => {
 elink.onclick = editclicked;
 
 //delete
-
-deleteclicked =()=>{
-    console.log("deleteclicked");
-
-
+const deleteclicked = () => {
+    // Display a styled confirmation dialog
+    const confirmation = confirm("Are you sure you want to delete this craft?");
+    
+    // If user confirms deletion
+    if (confirmation) {
+        // Perform deletion process (You'll need to implement this)
+        const craftId = popupTitle.parentElement.dataset.craftId; // Get craft ID
+        deleteCraft(craftId); // Call a function to delete the craft by ID
+        
+        // Update UI after deletion
+        const craftElement = document.querySelector(`[data-craft-id="${craftId}"]`);
+        if (craftElement) {
+            craftElement.remove(); // Remove deleted craft from the page
+        }
+    } else {
+        // If user cancels deletion, do nothing
+        console.log("Deletion cancelled");
+    }
 };
-dlink.onclick=deleteclicked;
+
+// Function to delete craft by ID (you need to implement this)
+const deleteCraft = async (craftId) => {
+    try {
+        // Send a DELETE request to the server to delete the craft
+        const response = await fetch(`/api/crafts/${craftId}`, {
+            method: 'DELETE',
+        });
+
+        // Check if deletion was successful
+        if (response.ok) {
+            console.log('Craft deleted successfully');
+        } else {
+            console.error('Failed to delete craft');
+        }
+    } catch (error) {
+        console.error('Error deleting craft:', error);
+
+    }
+};
+
+// Assign deleteclicked function to the delete link
+dlink.onclick = deleteclicked;
