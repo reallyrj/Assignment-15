@@ -146,6 +146,7 @@ addSupplyButton.onclick = function () {
 };
 
 // Save button click event
+// Save button click event
 const saveButton = document.getElementById("savebutton");
 
 saveButton.onclick = async function () {
@@ -172,29 +173,72 @@ saveButton.onclick = async function () {
     };
 
     console.log('Form Data:',formData);
-    
-    await fetch('/api/crafts/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Craft successfully added:', data);
-        
-        modal2.style.display = 'none';
 
-        // Create the craft element after successfully adding the craft
-        const craftElement = createCraftElement(formData);
-        craftsContainer.appendChild(craftElement);
-    })
-    .catch(error => {
-        console.error('Error saving craft:', error);
-        // Handle error
-    });
+    // Check if we are editing an existing craft
+    const editingCraft = modal.style.display === 'none' && modal2.style.display === 'block';
+    
+    // If we are editing an existing craft
+    if (editingCraft) {
+        // Perform the update operation here
+        console.log('Editing an existing craft');
+
+        // Assuming you have access to the craft ID or some identifier
+        const craftId = popupTitle.dataset.craftId; // Example: data-craft-id attribute on popupTitle
+        
+        // Update the craft on the server using a PUT request
+        await fetch(`/api/crafts/${craftId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(updatedCraft => {
+            console.log('Craft successfully updated:', updatedCraft);
+            // Update the UI to reflect the changes
+            // For example, update the details displayed in the popup
+            popupTitle.textContent = updatedCraft.name;
+            popupImage.src = 'images/' + updatedCraft.image;
+            popupDescription.textContent = "Description: " + updatedCraft.description;
+            popupSupplies.innerHTML = "Supplies: " + '';
+            updatedCraft.supplies.forEach(function (supply) {
+                const li = document.createElement('li');
+                li.textContent = supply;
+                popupSupplies.appendChild(li);
+            });
+        })
+        .catch(error => {
+            console.error('Error updating craft:', error);
+            // Handle error
+        });
+    } else {
+        // If we are creating a new craft, perform the create operation as before
+        console.log('Adding a new craft');
+        await fetch('/api/crafts/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Craft successfully added:', data);
+            
+            modal2.style.display = 'none';
+
+            // Create the craft element after successfully adding the craft
+            const craftElement = createCraftElement(formData);
+            craftsContainer.appendChild(craftElement);
+        })
+        .catch(error => {
+            console.error('Error saving craft:', error);
+            // Handle error
+        });
+    }
 };
+
 
 // Cancel button click event
 const cancelButton = document.getElementById("cancelbutton");
@@ -244,7 +288,6 @@ const editclicked = () => {
 };
 
 // Assign editclicked function to the edit link
-
 elink.onclick = editclicked;
 
 //delete
